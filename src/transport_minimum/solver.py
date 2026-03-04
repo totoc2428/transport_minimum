@@ -8,6 +8,42 @@ L'algorithme utilise:
 4. Un pivotage classique avec recherche de cycle par BFS
 """
 
+from typing import TypedDict
+
+
+class TransportSolution(TypedDict):
+    """Résultat complet du problème de transport."""
+
+    total_cost: int
+    flows: list[list[int]]
+
+
+def solve_transport(
+    suppliers: list[int], consumers: list[int], costs: list[list[int]]
+) -> TransportSolution:
+    """
+    Résout le problème de transport et retourne la solution complète.
+
+    Args:
+        suppliers: Liste des quantités disponibles chez chaque fournisseur.
+        consumers: Liste des demandes de chaque consommateur.
+        costs: Matrice des coûts où costs[i][j] est le coût unitaire
+               de transport du fournisseur i vers le consommateur j.
+
+    Returns:
+        Un dictionnaire contenant:
+        - total_cost: Le coût total minimum
+        - flows: Matrice des flux optimaux flows[i][j]
+    """
+    flows = _solve_transport_internal(suppliers, consumers, costs)
+    total_cost = sum(
+        flows[r][c] * costs[r][c]
+        for r in range(len(suppliers))
+        for c in range(len(consumers))
+        if flows[r][c] > 0
+    )
+    return {"total_cost": total_cost, "flows": flows}
+
 
 def minimum_transportation_price(
     suppliers: list[int], consumers: list[int], costs: list[list[int]]
@@ -27,6 +63,13 @@ def minimum_transportation_price(
     Note:
         L'offre totale doit être égale à la demande totale.
     """
+    return solve_transport(suppliers, consumers, costs)["total_cost"]
+
+
+def _solve_transport_internal(
+    suppliers: list[int], consumers: list[int], costs: list[list[int]]
+) -> list[list[int]]:
+    """Fonction interne retournant la matrice des flux optimaux."""
     num_s, num_c = len(suppliers), len(consumers)
     num_nodes = num_s + num_c
 
@@ -171,10 +214,4 @@ def minimum_transportation_price(
                 basis_set.remove((r, c))
                 break
 
-    # Calcul du coût total
-    return sum(
-        flows[r][c] * costs[r][c]
-        for r in range(num_s)
-        for c in range(num_c)
-        if flows[r][c] > 0
-    )
+    return flows

@@ -6,7 +6,7 @@ permettant de trouver l'allocation optimale entre fournisseurs
 et consommateurs minimisant les coûts de transport.
 """
 
-from .solver import minimum_transportation_price
+from .solver import TransportSolution, minimum_transportation_price, solve_transport
 
-__all__ = ["minimum_transportation_price"]
+__all__ = ["minimum_transportation_price", "solve_transport", "TransportSolution"]
 __version__ = "1.0.0"

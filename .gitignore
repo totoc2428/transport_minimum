@@ -92,3 +92,14 @@ Thumbs.db
 
 # Project specific
 main.py
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*

@@ -7,7 +7,7 @@ l'implémentation de l'algorithme du simplexe pour le transport.
 
 import pytest
 
-from transport_minimum import minimum_transportation_price
+from transport_minimum import minimum_transportation_price, solve_transport
 
 
 class TestMinimumTransportationPrice:
@@ -121,6 +121,67 @@ class TestPerformance:
         # On vérifie juste que ça s'exécute sans erreur
         result = minimum_transportation_price(suppliers, consumers, costs)
         assert result >= 0
+
+
+class TestSolveTransport:
+    """Tests pour la fonction solve_transport qui retourne les flux."""
+
+    def test_returns_total_cost(self):
+        """Vérifie que solve_transport retourne le même coût que minimum_transportation_price."""
+        suppliers = [10, 20, 20]
+        consumers = [5, 25, 10, 10]
+        costs = [
+            [2, 5, 3, 0],
+            [3, 4, 1, 4],
+            [2, 6, 5, 2],
+        ]
+        solution = solve_transport(suppliers, consumers, costs)
+        assert solution["total_cost"] == 150
+
+    def test_returns_valid_flows(self):
+        """Vérifie que les flux retournés sont valides."""
+        suppliers = [10, 20, 20]
+        consumers = [5, 25, 10, 10]
+        costs = [
+            [2, 5, 3, 0],
+            [3, 4, 1, 4],
+            [2, 6, 5, 2],
+        ]
+        solution = solve_transport(suppliers, consumers, costs)
+        flows = solution["flows"]
+
+        # Vérifier les dimensions
+        assert len(flows) == len(suppliers)
+        assert all(len(row) == len(consumers) for row in flows)
+
+        # Vérifier que chaque fournisseur envoie exactement son stock
+        for i, supplier_stock in enumerate(suppliers):
+            assert sum(flows[i]) == supplier_stock
+
+        # Vérifier que chaque consommateur reçoit exactement sa demande
+        for j, consumer_demand in enumerate(consumers):
+            assert sum(flows[i][j] for i in range(len(suppliers))) == consumer_demand
+
+    def test_flows_match_cost(self):
+        """Vérifie que le coût calculé depuis les flux correspond au total_cost."""
+        suppliers = [13, 44, 27, 39, 17]
+        consumers = [28, 12, 30, 17, 19, 34]
+        costs = [
+            [6, 6, 12, 8, 13, 13],
+            [7, 20, 5, 16, 11, 16],
+            [4, 6, 19, 0, 2, 18],
+            [1, 16, 6, 11, 8, 11],
+            [5, 6, 11, 1, 6, 14],
+        ]
+        solution = solve_transport(suppliers, consumers, costs)
+
+        # Calculer le coût manuellement depuis les flux
+        calculated_cost = sum(
+            solution["flows"][i][j] * costs[i][j]
+            for i in range(len(suppliers))
+            for j in range(len(consumers))
+        )
+        assert calculated_cost == solution["total_cost"]
 
 
 if __name__ == "__main__":
