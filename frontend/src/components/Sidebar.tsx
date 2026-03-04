@@ -23,7 +23,6 @@ export function Sidebar() {
     error,
     setToolMode,
     updatePoint,
-    solve,
     reset,
   } = useStore();
 
@@ -132,18 +131,15 @@ export function Sidebar() {
       <section>
         <h2>Actions</h2>
         <div className="actions">
-          <button
-            className="primary"
-            onClick={solve}
-            disabled={
-              isLoading ||
-              !isBalanced ||
-              warehouses.length === 0 ||
-              stores.length === 0
-            }
+          <div
+            className={`auto-calc-status ${isLoading ? "calculating" : isBalanced && warehouses.length > 0 && stores.length > 0 ? "ready" : "waiting"}`}
           >
-            {isLoading ? "⏳ Calcul..." : "🧮 Calculer"}
-          </button>
+            {isLoading
+              ? "⏳ Calcul en cours..."
+              : isBalanced && warehouses.length > 0 && stores.length > 0
+                ? "✨ Calcul automatique actif"
+                : "⏸️ En attente d'équilibre"}
+          </div>
           <button onClick={reset}>🗑️ Réinitialiser</button>
         </div>
         {error && <div className="error-msg">❌ {error}</div>}
@@ -180,7 +176,8 @@ export function Sidebar() {
           <li>🏪 Cliquez pour placer des magasins</li>
           <li>✋ Glissez pour déplacer les points</li>
           <li>📝 Modifiez les quantités dans le panneau</li>
-          <li>🧮 Calculez la solution optimale</li>
+          <li>⚖️ Équilibrez offre et demande</li>
+          <li>✨ Le calcul se fait automatiquement</li>
         </ul>
       </section>
     </div>

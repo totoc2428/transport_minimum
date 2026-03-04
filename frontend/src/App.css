@@ -159,6 +159,7 @@
 /* Actions */
 .actions {
   display: flex;
+  flex-direction: column;
   gap: 8px;
 }
 
@@ -303,4 +304,241 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent-blue);
+}
+
+/* ==================== ANIMATIONS ==================== */
+
+/* Animation de pulsation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Animation de fondu entrant */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation de glissement */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Animation de brillance */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Status auto-calcul */
+.auto-calc-status {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.auto-calc-status.ready {
+  background: linear-gradient(
+    90deg,
+    rgba(34, 197, 94, 0.1) 0%,
+    rgba(34, 197, 94, 0.2) 50%,
+    rgba(34, 197, 94, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  color: var(--accent-green);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.auto-calc-status.calculating {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--accent-blue);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.auto-calc-status.waiting {
+  background-color: rgba(161, 161, 170, 0.1);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+/* Solution avec animation */
+.solution {
+  font-size: 0.875rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.total-cost {
+  padding: 10px;
+  background-color: var(--bg-panel);
+  border-radius: 6px;
+  text-align: center;
+  margin-bottom: 10px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.total-cost strong {
+  font-size: 1.25rem;
+  color: var(--accent-green);
+  transition: all 0.3s ease;
+}
+
+/* Animation des items de flux */
+.flows-list li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  animation: slideIn 0.3s ease-out backwards;
+}
+
+.flows-list li:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.flows-list li:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.flows-list li:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.flows-list li:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.flows-list li:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.flows-list li:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.flows-list li:nth-child(7) {
+  animation-delay: 0.35s;
+}
+.flows-list li:nth-child(8) {
+  animation-delay: 0.4s;
+}
+
+/* Transitions globales */
+.sidebar section {
+  background-color: var(--bg-section);
+  padding: 15px;
+  border-radius: 8px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sidebar section:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Balance avec transition */
+.balance {
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Canvas avec transition */
+.canvas-container canvas {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.canvas-container canvas:hover {
+  box-shadow: 0 6px 30px rgba(0, 0, 0, 0.4);
+}
+
+/* Statistiques animées */
+.stat .value {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--accent-blue);
+  transition:
+    transform 0.2s ease,
+    color 0.2s ease;
+}
+
+.stat:hover .value {
+  transform: scale(1.1);
+}
+
+/* Boutons avec meilleure transition */
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background-color: var(--bg-panel);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tool-btn:hover {
+  border-color: var(--accent-blue);
+  background-color: rgba(59, 130, 246, 0.1);
+  transform: translateY(-2px);
+}
+
+.tool-btn.active {
+  border-color: var(--accent-blue);
+  background-color: rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Input avec focus animé */
+.edit-form input {
+  padding: 8px 12px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.edit-form input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }

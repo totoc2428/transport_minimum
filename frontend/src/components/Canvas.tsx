@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useStore } from "../store";
-import type { MapPoint, Store, Warehouse } from "../types";
+import type { MapPoint } from "../types";
 
 const WAREHOUSE_SIZE = 30;
 const STORE_RADIUS = 18;

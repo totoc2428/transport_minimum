@@ -2,25 +2,31 @@
  * Store Zustand pour l'état global de l'application
  */
 
-import { create } from 'zustand';
-import type { Flow, MapPoint, SolveResponse, Store, ToolMode, Warehouse } from './types';
+import { create } from "zustand";
+import type {
+  MapPoint,
+  SolveResponse,
+  Store,
+  ToolMode,
+  Warehouse,
+} from "./types";
 
 interface AppState {
   // Points sur la carte
   warehouses: Warehouse[];
   stores: Store[];
-  
+
   // Outil sélectionné
   toolMode: ToolMode;
-  
+
   // Point sélectionné pour édition
   selectedPointId: string | null;
-  
+
   // Solution calculée
   solution: SolveResponse | null;
   isLoading: boolean;
   error: string | null;
-  
+
   // Actions
   setToolMode: (mode: ToolMode) => void;
   addWarehouse: (x: number, y: number) => void;
@@ -42,7 +48,7 @@ const generateId = () => Math.random().toString(36).substring(2, 9);
 export const useStore = create<AppState>((set, get) => ({
   warehouses: [],
   stores: [],
-  toolMode: 'warehouse',
+  toolMode: "warehouse",
   selectedPointId: null,
   solution: null,
   isLoading: false,
@@ -54,13 +60,13 @@ export const useStore = create<AppState>((set, get) => ({
     warehouseCounter++;
     const warehouse: Warehouse = {
       id: generateId(),
-      type: 'warehouse',
+      type: "warehouse",
       x,
       y,
       name: `Entrepôt ${warehouseCounter}`,
       stock: 100,
     };
-    set((state) => ({ 
+    set((state) => ({
       warehouses: [...state.warehouses, warehouse],
       solution: null,
     }));
@@ -70,13 +76,13 @@ export const useStore = create<AppState>((set, get) => ({
     storeCounter++;
     const store: Store = {
       id: generateId(),
-      type: 'store',
+      type: "store",
       x,
       y,
       name: `Magasin ${storeCounter}`,
       demand: 50,
     };
-    set((state) => ({ 
+    set((state) => ({
       stores: [...state.stores, store],
       solution: null,
     }));
@@ -87,17 +93,23 @@ export const useStore = create<AppState>((set, get) => ({
       const warehouseIndex = state.warehouses.findIndex((w) => w.id === id);
       if (warehouseIndex !== -1) {
         const newWarehouses = [...state.warehouses];
-        newWarehouses[warehouseIndex] = { ...newWarehouses[warehouseIndex], ...updates } as Warehouse;
+        newWarehouses[warehouseIndex] = {
+          ...newWarehouses[warehouseIndex],
+          ...updates,
+        } as Warehouse;
         return { warehouses: newWarehouses, solution: null };
       }
-      
+
       const storeIndex = state.stores.findIndex((s) => s.id === id);
       if (storeIndex !== -1) {
         const newStores = [...state.stores];
-        newStores[storeIndex] = { ...newStores[storeIndex], ...updates } as Store;
+        newStores[storeIndex] = {
+          ...newStores[storeIndex],
+          ...updates,
+        } as Store;
         return { stores: newStores, solution: null };
       }
-      
+
       return {};
     });
   },
@@ -106,7 +118,8 @@ export const useStore = create<AppState>((set, get) => ({
     set((state) => ({
       warehouses: state.warehouses.filter((w) => w.id !== id),
       stores: state.stores.filter((s) => s.id !== id),
-      selectedPointId: state.selectedPointId === id ? null : state.selectedPointId,
+      selectedPointId:
+        state.selectedPointId === id ? null : state.selectedPointId,
       solution: null,
     }));
   },
@@ -131,18 +144,18 @@ export const useStore = create<AppState>((set, get) => ({
 
   solve: async () => {
     const { warehouses, stores } = get();
-    
+
     if (warehouses.length === 0 || stores.length === 0) {
-      set({ error: 'Ajoutez au moins un entrepôt et un magasin' });
+      set({ error: "Ajoutez au moins un entrepôt et un magasin" });
       return;
     }
 
     const totalSupply = warehouses.reduce((sum, w) => sum + w.stock, 0);
     const totalDemand = stores.reduce((sum, s) => sum + s.demand, 0);
-    
+
     if (totalSupply !== totalDemand) {
-      set({ 
-        error: `L'offre totale (${totalSupply}) doit égaler la demande totale (${totalDemand})` 
+      set({
+        error: `L'offre totale (${totalSupply}) doit égaler la demande totale (${totalDemand})`,
       });
       return;
     }
@@ -150,9 +163,9 @@ export const useStore = create<AppState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch('/api/solve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/solve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           warehouses: warehouses.map((w) => ({
             x: w.x,
@@ -166,21 +179,21 @@ export const useStore = create<AppState>((set, get) => ({
             name: s.name,
             demand: s.demand,
           })),
-          cost_mode: 'euclidean',
+          cost_mode: "euclidean",
         }),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.detail || 'Erreur de calcul');
+        throw new Error(data.detail || "Erreur de calcul");
       }
 
       const solution: SolveResponse = await response.json();
       set({ solution, isLoading: false });
     } catch (err) {
-      set({ 
-        error: err instanceof Error ? err.message : 'Erreur inconnue', 
-        isLoading: false 
+      set({
+        error: err instanceof Error ? err.message : "Erreur inconnue",
+        isLoading: false,
       });
     }
   },
